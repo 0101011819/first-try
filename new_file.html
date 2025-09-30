@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>女性科学家资料查询系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .search-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 800px;
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .search-btn {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: linear-gradient(to right, #2980b9, #2573a7);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .search-btn:active {
+            transform: translateY(0);
+        }
+        
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .scientist-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .scientist-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .country {
+            font-size: 1rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .card-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .section-title {
+            color: #3498db;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .achievements, .awards {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: white;
+            font-size: 1.3rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            margin-top: 30px;
+        }
+        
+        .results-info {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+        
+        footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 30px 0;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-input, .search-btn {
+                width: 100%;
+            }
+            
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>女性科学家资料库</h1>
+            <p class="subtitle">本系统收录了多位在各领域取得杰出成就的女性科学家信息，通过搜索姓名可查询其国籍、科研成果及所获荣誉奖项</p>
+        </header>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="请输入科学家姓名（支持中文、拼音或部分姓名）">
+                <button id="searchBtn" class="search-btn">
+                    <i class="fas fa-search"></i> 搜索
+                </button>
+            </div>
+        </div>
+        
+        <div id="resultsInfo" class="results-info">请在上方输入框中输入科学家姓名进行查询</div>
+        
+        <div id="resultsContainer" class="results-container">
+            <!-- 搜索结果将在这里动态显示 -->
+        </div>
+    </div>
+    
+    <footer>
+        <p>女性科学家资料查询系统 © 2023 | 收录全球多位杰出科学家的成就</p>
+    </footer>
+
+    <script>
+        // 科学家数据
+        const scientists = [
+            {
+                id: 1,
+                name: "克里斯蒂安娜・努斯莱因-福尔哈德",
+                nationality: "德国",
+                achievements: "与埃里克・威斯乔斯合作，发现控制果蝇胚胎发育的基因，揭示动物发育基本机制，为发育生物学发展奠定基础，对理解人类胚胎发育和先天性疾病有重要启示。",
+                awards: "1995年诺贝尔生理学或医学奖；多个国际发育生物学领域奖项。"
+            },
+            {
+                id: 2,
+                name: "弗朗索瓦丝・巴尔-西诺西",
+                nationality: "法国",
+                achievements: "1983年与吕克・蒙塔尼等合作发现了人类免疫缺陷病毒（HIV病毒），为艾滋病的研究和防治奠定了基础。",
+                awards: "2008年诺贝尔生理学或医学奖"
+            },
+            {
+                id: 3,
+                name: "吉纳维芙・阿尔穆兹尼",
+                nationality: "法国",
+                achievements: "发现组蛋白伴侣蛋白FACT在DNA复制中的关键作用，揭示表观遗传标记在癌症中的异常调控机制。其团队开发的CRISPR表观遗传编辑技术为癌症治疗提供新策略。",
+                awards: "2024年欧莱雅-联合国教科文组织世界杰出女科学家奖、法国国家科学研究中心金奖。"
+            },
+            {
+                id: 4,
+                name: "娜达・贾巴多",
+                nationality: "加拿大",
+                achievements: "发现组蛋白突变与癌症关系",
+                awards: "获2024年'欧莱雅-联合国教科文组织世界杰出女科学家奖'。"
+            },
+            {
+                id: 5,
+                name: "娜达・贾巴多",
+                nationality: "加拿大",
+                achievements: "首次发现组蛋白突变（oncohistones）导致儿童脑肿瘤，开发基于基因突变的个性化治疗方案。其团队在胶质母细胞瘤模型中证实靶向组蛋白修饰可显著延长生存期。",
+                awards: "2024年欧莱雅-联合国教科文组织世界杰出女科学家奖、加拿大皇家学会院士。"
+            },
+            {
+                id: 6,
+                name: "罗丝・莱克",
+                nationality: "喀麦隆",
+                achievements: "在改善妊娠相关疟疾的治疗效果、支持非洲小儿麻痹症的根除工作、改善非洲免疫接种情况等方面成果杰出",
+                awards: "2024年'欧莱雅-联合国教科文组织世界杰出女科学家奖'"
+            },
+            {
+                id: 7,
+                name: "伊丽莎白・海伦・布莱克本",
+                nationality: "美澳双重国籍",
+                achievements: "发现端粒和端粒酶是如何保护染色体的，这一成果揭开了人类衰老和罹患癌症等严重疾病的奥秘。",
+                awards: "2009年诺贝尔生理学或医学奖；美国艾利・莉莉微生物学和免疫学研究奖（1988年）；美国国家科学院分子生物学奖（1990年）等。"
+            },
+            {
+                id: 8,
+                name: "尼娜・费德罗夫",
+                nationality: "美国",
+                achievements: "在可移动元件（跳跃基因）、植物应激反应等方面研究成果显著，确定出超1200个胁迫相关拟南芥基因并研究其表达，发现玉米Spm转座子相关机制等",
+                awards: "1990年芝加哥大学霍华德・泰勒・里克茨奖、1992年纽约科学院杰出现代女性科学家奖、1997年西格玛西奇约翰・P・麦格文科学与社会奖章、2003年锡拉丘兹大学乔治・阿伦特斯先锋奖章、2001年被任命为国家科学委员会委员，曾担任美国国务卿科学技术顾问"
+            },
+            {
+                id: 9,
+                name: "珍妮弗・杜德纳",
+                nationality: "美国",
+                achievements: "与他人合作发展CRISPR技术，指出CRISPR-Cas9系统在体外实验能'定点'切割DNA",
+                awards: "2020年诺贝尔化学奖，世界杰出女科学家奖"
+            },
+            {
+                id: 10,
+                name: "琳达・巴克",
+                nationality: "美国",
+                achievements: "发现了嗅觉受体和嗅觉系统的组织方式。",
+                awards: "2004年诺贝尔生理学或医学奖。"
+            },
+            {
+                id: 11,
+                name: "弗朗西丝・阿诺德",
+                nationality: "美国",
+                achievements: "开创了酶的定向进化技术，通过模拟自然进化过程，在实验室中快速进化出具有特定功能的酶，为生物催化和生物工程领域带来了重大变革。",
+                awards: "2018年诺贝尔化学奖（与乔治・史密斯和格雷戈里・温特共同获得）。"
+            },
+            {
+                id: 12,
+                name: "卡萝尔・格雷德",
+                nationality: "美国",
+                achievements: "发现了端粒酶，揭示了其在维持染色体末端结构和细胞永生中的关键作用，为理解细胞衰老和癌症发生机制提供了重要线索。",
+                awards: "2009年诺贝尔生理学或医学奖（与伊丽莎白・布莱克本和杰克・绍斯塔克共同获得）"
+            },
+            {
+                id: 13,
+                name: "格特鲁德・B・埃利恩",
+                nationality: "美国",
+                achievements: "开发多种重要药物，如治疗白血病的6-巯基嘌呤、用于器官移植的硫唑嘌呤，开创理性药物设计先河，改变药物研发模式。",
+                awards: "1988年诺贝尔生理学或医学奖；拉斯克临床医学研究奖等。"
+            },
+            {
+                id: 14,
+                name: "芭芭拉・麦克林托克",
+                nationality: "美国",
+                achievements: "发现可移动的遗传元素'跳跃基因'，改变人们对基因和染色体的认识，为现代遗传学发展提供新视角，在生物进化和基因组稳定性研究中意义重大。",
+                awards: "1983年诺贝尔生理学或医学奖；美国国家科学奖章等。"
+            },
+            {
+                id: 15,
+                name: "罗莎琳・雅洛",
+                nationality: "美国",
+                achievements: "与同事开发放射免疫分析法（RIA），用于测量血液中微量物质浓度，为医学诊断和研究提供重要工具，广泛应用于激素、药物和疾病标志物检测。",
+                awards: "1977年诺贝尔生理学或医学奖；美国国家科学院院士等。"
+            },
+            {
+                id: 16,
+                name: "凯瑟琳・肯尼迪",
+                nationality: "美国",
+                achievements: "致力于研究免疫系统在肿瘤发生、发展和治疗中的作用，为肿瘤免疫治疗的发展提供了重要理论基础。",
+                awards: "获得了美国免疫学家协会颁发的杰出贡献奖等多项荣誉"
+            },
+            {
+                id: 17,
+                name: "莉娜・魏",
+                nationality: "美国",
+                achievements: "专注于研究基因表达调控、蛋白质功能及其在疾病中的作用等。",
+                awards: "获得了美国生物化学学会颁发的杰出青年科学家奖等多项荣誉"
+            },
+            {
+                id: 18,
+                name: "丽塔・考威尔",
+                nationality: "美国",
+                achievements: "揭示霍乱弧菌的生存机制，领导'9・11'炭疽信事件细菌溯源，推动基因组学和生物信息学应用，首次发现RNA病毒的复制机制。",
+                awards: "美国国家科学基金会首位女性主任、美国微生物学会终身成就奖。"
+            },
+            {
+                id: 19,
+                name: "南希・霍普金斯",
+                nationality: "美国",
+                achievements: "推动斑马鱼作为模式生物研究脊椎动物发育，首次发现Hox基因在肢体形成中的作用。",
+                awards: "美国国家科学院院士、麻省理工学院终身成就奖。"
+            },
+            {
+                id: 20,
+                name: "Margaret McFall-Ngai",
+                nationality: "美国",
+                achievements: "开创动物-微生物共生研究领域，揭示夏威夷短尾乌贼与费氏弧菌的发光共生机制，提出'微生物相关分子模式'（MAMPs）概念，推动微生物组研究发展。",
+                awards: "美国国家科学院院士、美国微生物学会FEMS奖。"
+            },
+            {
+                id: 21,
+                name: "弗朗西斯・阿诺德",
+                nationality: "美国",
+                achievements: "开创酶定向进化技术，开发可降解塑料的PETase酶，推动生物燃料和制药领域的绿色化学。",
+                awards: "诺贝尔化学奖（2018）、美国国家工程院德雷珀奖。"
+            },
+            {
+                id: 22,
+                name: "梅-布里特・莫瑟尔",
+                nationality: "挪威",
+                achievements: "发现大脑'网格细胞'",
+                awards: "获2014年诺贝尔生理学或医学奖。"
+            },
+            {
+                id: 23,
+                name: "卡塔琳・考里科",
+                nationality: "匈牙利裔美国",
+                achievements: "长期致力于mRNA技术研究，发现修饰mRNA可避免被免疫系统识别，为mRNA疫苗研发奠定基础，新冠疫情期间，其成果助力多款mRNA疫苗成功研发和应用。",
+                awards: "多个科学奖项，如阿尔伯尼生物医学奖等。"
+            },
+            {
+                id: 24,
+                name: "丽塔・列维-蒙塔尔奇尼",
+                nationality: "意大利",
+                achievements: "发现了神经生长因子，为神经科学领域奠定了重要基础，开创了对神经元发育和存活机制的研究。",
+                awards: "1986年诺贝尔生理学或医学奖"
+            },
+            {
+                id: 25,
+                name: "舒巴・托勒",
+                nationality: "印度",
+                achievements: "揭示大脑皮层神经元迁移的分子机制，发现神经干细胞分化的关键调控因子。其团队开发的3D脑类器官模型为神经退行性疾病研究提供新平台。",
+                awards: "2023年印度科学大会青年科学家奖、印度国家脑研究中心杰出贡献奖。"
+            },
+            {
+                id: 26,
+                name: "多萝西・霍奇金",
+                nationality: "英国",
+                achievements: "利用X射线晶体学确定了青霉素、维生素B12和胰岛素等重要生物分子的结构，为药物研发和生物化学领域发展奠定基础，推动了人们对生物分子结构与功能关系的理解。",
+                awards: "1964年诺贝尔化学奖；英国皇家学会院士，是该学会历史上第二位女性院士。"
+            },
+            {
+                id: 27,
+                name: "周志华",
+                nationality: "中国",
+                achievements: "长期致力于微生物分子生态学及种群遗传学研究；聚焦能源问题，探索将可再生资源转化为可用能源，建立转化不同类型再生资源的微生物体系。",
+                awards: "入选中科院百人计划、上海市浦江人才计划"
+            },
+            {
+                id: 28,
+                name: "吴晨",
+                nationality: "中国",
+                achievements: "在食管癌、胰腺癌等肿瘤遗传学研究方面成果突出，揭示肿瘤易感基因、基因-环境相互作用以及遗传变异与患者预后差异",
+                awards: "2013年第十三届中国青年科技奖"
+            },
+			{
+			                id: 29,
+			                name: "屠呦呦",
+			                nationality: "中国",
+			                achievements: "发现青蒿素和双氢青蒿素，为全球抗疟事业作出巨大贡献",
+			                awards: "2015年诺贝尔生理学或医学奖、2016年度国家最高科学技术奖、'共和国勋章'"
+			            },
+			            {
+			                id: 30,
+			                name: "林巧稚",
+			                nationality: "中国",
+			                achievements: "在胎儿宫内呼吸、女性盆腔疾病、妇科肿瘤、新生儿溶血症等方面研究有突出贡献",
+			                awards: "'万婴之母'美誉，获全国三八红旗手等荣誉"
+			            },
+			            {
+			                id: 31,
+			                name: "颜宁",
+			                nationality: "中国",
+			                achievements: "发现多种介导离子和糖跨细胞膜运输的膜蛋白原子结构，揭示跨膜转运原理，解析多种重要膜蛋白结构",
+			                awards: "中国科学院院士，美国科学院外籍院士、美国艺术与科学院外籍院士，获欧莱雅—联合国教科文组织世界杰出女科学家奖等"
+			            },
+			            {
+			                id: 32,
+			                name: "许琪",
+			                nationality: "中国",
+			                achievements: "在难治性癫痫、抑郁症、精神分裂症、阿尔茨海默病等重性脑疾病发病机制等方面研究有成果，为精确诊断和新治疗靶点发现提供线索",
+			                awards: "第十四届'中国青年女科学家奖'获得者，在国际著名期刊发表多篇通讯作者或第一作者SCI论文"
+			            },
+			            {
+			                id: 33,
+			                name: "万蕊雪",
+			                nationality: "中国",
+			                achievements: "在酵母剪接体三维结构与分子机理研究领域取得突破性进展，以共同第一作者身份在《科学》和《细胞》等国际权威期刊上发表多篇高水平论文。",
+			                awards: "2022年获第十七届中国青年科技奖；2019年入选福布斯中国30位30岁以下精英榜；2018年获《科学》杂志和SciLifeLab颁发的2018年度青年科学家奖等。"
+			            },
+			            {
+			                id: 34,
+			                name: "庄小威",
+			                nationality: "中国",
+			                achievements: "发展和使用单分子生物学及生物成像技术以及超高分辨生物成像技术，用以研究体外及活细胞中生物分子及其分子组装过程。",
+			                awards: "2018科学突破奖之生命科学突破奖，美国国家科学院院士、美国艺术与科学学院院士、中国科学院外籍院士。"
+			            },
+			            {
+			                id: 35,
+			                name: "李兰娟",
+			                nationality: "中国",
+			                achievements: "创建李氏人工肝支持系统治疗重型肝炎；从基因角度揭示肠道菌群与肝硬化关系；在传染病防控研究中取得众多成果。",
+			                awards: "第二届全国创新争先奖；第十一届光华工程科技奖工程奖；第九届谈家桢科学奖临床医学奖。"
+			            },
+			            {
+			                id: 36,
+			                name: "陈薇",
+			                nationality: "中国",
+			                achievements: "研制出中国军队首个SARS预防生物新药'重组人干扰素ω'；全球首个获批新药证书的埃博拉疫苗。",
+			                awards: "'中国十大杰出青年'；中国科协'求是'奖；中国青年女科学家奖；'人民英雄'国家荣誉称号。"
+			            },
+			            {
+			                id: 37,
+			                name: "叶玉如",
+			                nationality: "中国",
+			                achievements: "在研究促进和维持神经细胞存活与发育的神经营养因子方面有卓越成就，在探索脑部发育和突触可塑性的分子机制等领域作出重要贡献。",
+			                awards: "香港裘槎基金会优秀学者奖；世界杰出女科学家成就奖；香港特区政府颁授荣誉勋章。"
+			            },
+			            {
+			                id: 38,
+			                name: "陈赛娟",
+			                nationality: "中国",
+			                achievements: "长期致力于白血病发病机理与治疗研究，建立完整的细胞和分子遗传学技术。",
+			                awards: "全国创新争先奖；领衔的《临床血液学》课程被评为国家级精品课程。"
+			            },
+			            {
+			                id: 39,
+			                name: "王红艳",
+			                nationality: "中国",
+			                achievements: "在遗传性疾病的遗传易感性关联研究，致病基因突变检测及患病风险评估等方面有研究成果。",
+			                awards: "世界首位获颁国际临床化学和实验室医学联合会（IFCC）'青年研究新人奖'的科学家。"
+			            },
+			            {
+			                id: 40,
+			                name: "王琳芳",
+			                nationality: "中国",
+			                achievements: "长期致力于蛋白质结构与抗原性关系的研究，在中国率先开展精子蛋白质及其基因的表达和功能研究。",
+			                awards: "1993年卫生部科技进步奖、1995年国家自然科学奖二等奖、1996年光华工程科技奖工程奖一等奖等。"
+			            }
+        ];
+
+        // 获取DOM元素
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultsInfo = document.getElementById('resultsInfo');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        // 搜索功能
+        function searchScientists() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            
+            if (!searchTerm) {
+                resultsInfo.textContent = "请输入科学家姓名进行查询";
+                resultsContainer.innerHTML = '';
+                return;
+            }
+            
+            // 过滤匹配的科学家
+            const matchedScientists = scientists.filter(scientist => 
+                scientist.name.toLowerCase().includes(searchTerm)
+            );
+            
+            // 更新结果信息
+            if (matchedScientists.length === 0) {
+                resultsInfo.textContent = `没有找到与"${searchTerm}"相关的科学家`;
+                resultsContainer.innerHTML = '';
+            } else {
+                resultsInfo.textContent = `找到 ${matchedScientists.length} 位与"${searchTerm}"相关的科学家`;
+                displayResults(matchedScientists);
+            }
+        }
+
+        // 显示搜索结果
+        function displayResults(scientists) {
+            resultsContainer.innerHTML = '';
+            
+            scientists.forEach(scientist => {
+                const card = document.createElement('div');
+                card.className = 'scientist-card';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div>
+                            <div class="name">${scientist.name}</div>
+                            <div class="country">
+                                <i class="fas fa-globe"></i> ${scientist.nationality}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <div class="section-title">
+                                <i class="fas fa-trophy"></i> 主要成就
+                            </div>
+                            <div class="achievements">${scientist.achievements}</div>
+                        </div>
+                        <div>
+                            <div class="section-title">
+                                <i class="fas fa-award"></i> 所获奖项
+                            </div>
+                            <div class="awards">${scientist.awards}</div>
+                        </div>
+                    </div>
+                `;
+                
+                resultsContainer.appendChild(card);
+            });
+        }
+
+        // 事件监听
+        searchBtn.addEventListener('click', searchScientists);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchScientists();
+            }
+        });
+    </script>
+</body>
+</html>
